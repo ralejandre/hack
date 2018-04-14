@@ -52,11 +52,9 @@ const Twuit = function({ text, user }) {
   return (
     <section className="py-5 extra-margin">
       <div className="twitta-container text-center">
-        <h2 className="twitter-text animated bounceInRight">
-          { text }
-        </h2>
+        <h2 className="twitter-text animated bounceInRight">{text}</h2>
         <h4 className="text-right text-muted mt-5 twitter-text animated bounceInRight">
-          @{ user }
+          @{user}
         </h4>
       </div>
     </section>
@@ -166,10 +164,11 @@ class App extends Component {
     this.state = {
       positions,
       tweet: {
-        full_text: "",
-        user: { username: "" }
+        full_text: '',
+        user: { username: '' }
       }
     };
+  }
 
   randomPositions = (latt, lng, puntos) => {
     let positions = [{ lat: latt, lng: lng }];
