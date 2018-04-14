@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import GoogleMapReact from 'google-map-react';
-import brain from 'brain.js';
-import fs from 'fs';
-import parser from '../src/TweetNN/parser';
-import myData from './TweetNN/output-trainedmodel.json';
-//import ClassifyTweet from './TweetNN/brain_predict';
+import ClassifyTweet from './TweetNN/brain_predict';
 // const ClassifyTweet = require('./TweetNN/brain_predict');
 /*eslint no-restricted-globals: ["error", "event"]*/
 
@@ -162,38 +158,21 @@ const Accordion = function() {
 };
 
 class App extends Component {
-  state = {
-    positions: [{ lat: 19.0196607, lng: -98.2448809 }]
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      positions: [{ lat: 19.0196607, lng: -98.2448809 }]
+    };
+  }
+
   static defaultProps = {
     center: { lat: 19.0196607, lng: -98.2448809 },
     zoom: 13
   };
 
-  ClassifyTweet = function(tweet) {
-    console.log(myData);
-    var obj = JSON.parse(myData);
-
-    var net = new brain.NeuralNetwork();
-
-    net.fromJSON(obj);
-
-    var test_tweet = { tweet };
-    var formatted_test_tweet = parser.formatTestSet(test_tweet);
-
-    var output = net.run(formatted_test_tweet);
-
-    console.log(output);
-
-    if (output >= 0.6) {
-      return true;
-    }
-
-    return false;
-  };
-
-  componentWillMount = () => {
-    var result = this.ClassifyTweet(
+  componentDidMount = () => {
+    var result = ClassifyTweet(
       'Nos dirigimos a Choque, Romero esq. Calle Bolivar, Col. Niños Héroes, al mando V-12-1 unidad 0063.'
     );
     console.log(result); //true
