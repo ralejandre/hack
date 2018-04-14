@@ -1,8 +1,13 @@
 import React, { Component } from 'react';
 import GoogleMapReact from 'google-map-react';
 import ClassifyTweet from './TweetNN/brain_predict';
+import Tweets from './TweetNN/valid_tweets';
 // const ClassifyTweet = require('./TweetNN/brain_predict');
 /*eslint no-restricted-globals: ["error", "event"]*/
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 const Nav = function() {
   return (
@@ -52,17 +57,15 @@ const Nav = function() {
   );
 };
 
-const Twuit = function() {
+const Twuit = function({text, user}) {
   return (
     <section className="py-5 extra-margin">
       <div className="twitta-container text-center">
         <h2 className="twitter-text animated bounceInRight">
-          Bomberos trabajando en Choque, entre dos autos particulares, calle
-          Gabino Barreda y Alfonso Herrera Col. San Rafael. Sin lesionados.
-          #SEPUEDE #CDMX #YOSOYBOMBERO
+          { text }
         </h2>
         <h4 className="text-right text-muted mt-5 twitter-text animated bounceInRight">
-          @r111kytrigo
+          @{ user }
         </h4>
       </div>
     </section>
@@ -158,46 +161,47 @@ const Accordion = function() {
 };
 
 class App extends Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
-
-    this.state = {
-      positions: [{ lat: 19.0196607, lng: -98.2448809 }]
-    };
-  }
-
-  static defaultProps = {
-    center: { lat: 19.0196607, lng: -98.2448809 },
-    zoom: 13
-  };
-
-  componentDidMount = () => {
-    var result = ClassifyTweet(
-      'Nos dirigimos a Choque, Romero esq. Calle Bolivar, Col. Niños Héroes, al mando V-12-1 unidad 0063.'
-    );
-    console.log(result); //true
-    let lat = this.state.positions[length].lat;
-    let lng = this.state.positions[length].lng;
-    let p = this.state.positions;
+    const latt = 19.0196607
+    const lng = -98.2448809;
+    let positions = [{ lat: 19.0196607, lng: -98.2448809 }];
     for (var i = 0; i < 150; i++) {
-      p.push({
-        lat: (lat += 0.00012),
-        lng: (lng += 0.00012)
+      positions.push({
+        lat: latt + getRandomInt(1, 30) / 1000,
+        lng: lng + getRandomInt(1, 30) / 1000
       });
     }
-    this.setState({ positions: p });
+    this.state = {
+      positions,
+      tweet: {
+        full_text: "",
+        user: { username: "" }
+      }
+    };
+
+    this.props = {
+      center: { lat: 19.0196607, lng: -98.2448809 },
+      zoom: 13
+    }
+  }
+
+  componentDidMount () {
+    let randIdx = getRandomInt(0, Tweets.length)
+    let randTW = Tweets[randIdx]
+    this.setState({ tweet: randTW });
   };
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     clearInterval(this.interval);
   }
 
-  render() {
+  render () {
     return (
       // Important! Always set the container height explicitly
       <div>
         <Nav />
-        <Twuit />
+        <Twuit text={this.state.tweet.full_text} user={this.state.tweet.user.screen_name} />
         <div style={{ height: '100vh', width: '100%' }}>
           <GoogleMapReact
             bootstrapURLKeys={{
