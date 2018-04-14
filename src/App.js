@@ -3,19 +3,16 @@ import GoogleMapReact from 'google-map-react';
 import ClassifyTweet from './TweetNN/brain_predict';
 import Tweets from './TweetNN/valid_tweets';
 // const ClassifyTweet = require('./TweetNN/brain_predict');
-/*eslint no-restricted-globals: ["error", "event"]*/
 
 function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 const Nav = function() {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
       <div className="container">
-        <a className="navbar-brand" href="#">
-          Start Bootstrap
-        </a>
+        <a className="navbar-brand">&#60;hack&#62; 3.0</a>
         <button
           className="navbar-toggler"
           type="button"
@@ -30,25 +27,19 @@ const Nav = function() {
         <div className="collapse navbar-collapse" id="navbarResponsive">
           <ul className="navbar-nav ml-auto">
             <li className="nav-item active">
-              <a className="nav-link" href="#">
+              <a className="nav-link">
                 Home
                 <span className="sr-only">(current)</span>
               </a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#">
-                About
-              </a>
+              <a className="nav-link">About</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#">
-                Services
-              </a>
+              <a className="nav-link">Services</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href="#">
-                Contact
-              </a>
+              <a className="nav-link">Contact</a>
             </li>
           </ul>
         </div>
@@ -57,15 +48,13 @@ const Nav = function() {
   );
 };
 
-const Twuit = function({text, user}) {
+const Twuit = function({ text, user }) {
   return (
     <section className="py-5 extra-margin">
       <div className="twitta-container text-center">
-        <h2 className="twitter-text animated bounceInRight">
-          { text }
-        </h2>
+        <h2 className="twitter-text animated bounceInRight">{text}</h2>
         <h4 className="text-right text-muted mt-5 twitter-text animated bounceInRight">
-          @{ user }
+          @{user}
         </h4>
       </div>
     </section>
@@ -161,60 +150,79 @@ const Accordion = function() {
 };
 
 class App extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
-    const latt = 19.0196607
-    const lng = -98.2448809;
-    let positions = [{ lat: 19.0196607, lng: -98.2448809 }];
-    for (var i = 0; i < 150; i++) {
-      positions.push({
-        lat: latt + getRandomInt(1, 30) / 1000,
-        lng: lng + getRandomInt(1, 30) / 1000
-      });
-    }
+    let positions = [];
+    positions = this.randomPositions(19.0196607, -98.2448809, 20000);
+    const p1 = this.randomPositions(24.5833456, -107.0858151, 2000);
+    const p2 = this.randomPositions(19.320931, -99.4328124, 3500);
+    const p3 = this.randomPositions(25.6490376, -100.4431832, 1000);
+    const p4 = this.randomPositions(26.6490376, -101.4431832, 3000);
+    const p5 = this.randomPositions(25.6490376, -111.6431832, 10000);
+    positions = positions.concat(p1, p2, p3, p4, p5);
+
     this.state = {
       positions,
       tweet: {
-        full_text: "",
-        user: { username: "" }
-      }
-    };
-
-    this.props = {
+        full_text: '',
+        user: { username: '' }
+      },
       center: { lat: 19.0196607, lng: -98.2448809 },
-      zoom: 13
-    }
+      zoom: 5
+    };
   }
 
-  componentDidMount () {
-    let randIdx = getRandomInt(0, Tweets.length)
-    let randTW = Tweets[randIdx]
-    this.setState({ tweet: randTW });
+  randomPositions = (latt, lng, puntos) => {
+    let positions = [{ lat: latt, lng: lng }];
+    for (var i = 0; i < puntos; i++) {
+      positions.push({
+        lat:
+          latt +
+          getRandomInt(
+            getRandomInt(getRandomInt(1, 100), 80),
+            getRandomInt(getRandomInt(20, 130), 60)
+          ) /
+            1000,
+        lng:
+          lng + getRandomInt(getRandomInt(1, 100), getRandomInt(30, 80)) / 1000
+      });
+    }
+
+    return positions;
   };
 
-  componentWillUnmount () {
+  componentDidMount() {
+    let randIdx = getRandomInt(0, Tweets.length);
+    let randTW = Tweets[randIdx];
+    this.setState({ tweet: randTW });
+  }
+
+  componentWillUnmount() {
     clearInterval(this.interval);
   }
 
-  render () {
+  render() {
     return (
       // Important! Always set the container height explicitly
       <div>
         <Nav />
-        <Twuit text={this.state.tweet.full_text} user={this.state.tweet.user.screen_name} />
+        <Twuit
+          text={this.state.tweet.full_text}
+          user={this.state.tweet.user.screen_name}
+        />
         <div style={{ height: '100vh', width: '100%' }}>
           <GoogleMapReact
             bootstrapURLKeys={{
               key: 'AIzaSyCNiJIcpaoVvP04aLEK5FLOAJSc5VDIl_Y'
             }}
-            zoom={this.props.zoom}
-            center={this.props.center}
+            zoom={this.state.zoom}
+            center={this.state.center}
             heatmapLibrary={true}
             heatmap={{
               positions: this.state.positions,
               options: {
                 radius: 20,
-                opacity: 0.7,
+                opacity: 0.9,
                 gradient: [
                   'rgba(0, 255, 255, 0)',
                   'rgba(0, 255, 255, 1)',
