@@ -176,7 +176,7 @@ class App extends Component {
       positions,
       tweet: {
         full_text: "",
-        user: { username: "" }
+        user: { screen_name: "" }
       }
     };
 
